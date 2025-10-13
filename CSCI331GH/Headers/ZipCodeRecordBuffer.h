@@ -64,6 +64,25 @@ public:
         return true;
     }
 
+    // Parse a CSV line and store each field in m_fields
+    // The expected order is: Zip, Place, State, County, Latitude, Longitude
+    // Returns true if exactly 6 fields were parsed, false otherwise
+    bool unpackFromCSV(const std::string& line) {
+        std::stringstream ss(line);
+        std::string field;
+        int i = 0;
+
+        // Read up to 6 fields from the CSV line
+        while (std::getline(ss, field, ',') && i < 6) {
+            // Store the field in the array; truncation can be added if desired
+            m_fields[i++] = field;
+        }
+
+        // Return true if all 6 expected fields were read
+        return i == 6;
+    }
+
+
     // Accessor methods to retrieve data, converting from string to the correct type
     string getZipCode() const { return m_fields[0]; }
     string getPlaceName() const { return m_fields[1]; }
@@ -81,5 +100,8 @@ public:
 private:
     string m_fields[6]; // A fixed-size array to hold the 6 fields
 };
+
+
+
 
 #endif // FIXED_ZIP_CODE_RECORD_BUFFER_H#pragma once

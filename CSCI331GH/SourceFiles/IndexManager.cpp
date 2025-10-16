@@ -29,11 +29,11 @@ void IndexManager::buildIndex(const std::string& dataFileName) {
         return;
     }
 
-    uint64_t offset = 0;
+    uint64_t offset = dataFile.tellg(); // Get initial offset after header
     uint32_t recordLength = 0;
 
     while (dataFile.read(reinterpret_cast<char*>(&recordLength), sizeof(recordLength))) {
-        offset = static_cast<uint64_t>(dataFile.tellg());
+        
         std::string record(recordLength, '\0');
         dataFile.read(&record[0], recordLength);
 
@@ -41,18 +41,13 @@ void IndexManager::buildIndex(const std::string& dataFileName) {
         std::string zip;
         std::getline(ss, zip, ',');
 
-        // Remove quotes and whitespace
-        zip.erase(std::remove(zip.begin(), zip.end(), '"'), zip.end());
-        zip.erase(std::remove_if(zip.begin(), zip.end(),
-            [](char c){ return std::isspace(static_cast<unsigned char>(c)); }), zip.end());
-
-        if (zip == "ZipCode" || zip.empty()) continue;
-
-        // Only keep numeric ZIP codes
         if (std::all_of(zip.begin(), zip.end(),
             [](char c){ return std::isdigit(static_cast<unsigned char>(c)); })) {
-            indexMap[zip] = offset;
+            indexMap[zip] = offset; // <-- Store the offset captured BEFORE the read
         }
+
+        // Get the offset for the NEXT record
+        offset = static_cast<uint64_t>(dataFile.tellg());
     }
 
     dataFile.close();

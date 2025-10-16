@@ -1,3 +1,5 @@
+// In SourceFiles/readBinaryFile.cpp
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -8,8 +10,6 @@
 
 using namespace std;
 
-
-
 void readBinaryFile(const string& inputFileName, const string& outputFileName) {
     ifstream inputFile(inputFileName, ios::binary);
     ofstream outputFile(outputFileName);
@@ -18,7 +18,6 @@ void readBinaryFile(const string& inputFileName, const string& outputFileName) {
         cerr << "Error opening binary file!" << endl;
         return;
     }
-
     if (!outputFile.is_open()) {
         cerr << "Error opening CSV file!" << endl;
         return;
@@ -31,15 +30,25 @@ void readBinaryFile(const string& inputFileName, const string& outputFileName) {
         return;
     }
 
-    cout << "File version: " << header.getVersion() << endl;
-    cout << "Record count: " << header.getRecordCount() << endl;
-    cout << "Creation date: " << header.getCreationDate() << endl;
+    cout << "--- File Header Information ---" << endl;
+    cout << "File Type:       " << header.fileStructureType << endl;
+    cout << "Version:         " << header.version << endl;
+    cout << "Record count:    " << header.recordCount << endl;
+    cout << "Creation date:   " << header.creationDate << endl;
+    cout << "Index File:      " << header.indexFileName << endl;
+    cout << "--- Field Schema ---" << endl;
+    for(size_t i = 0; i < header.fields.size(); ++i) {
+        cout << "  - Field " << i << ": " << header.fields[i].fieldName;
+        if (i == header.primaryKeyFieldIndex) cout << " (Primary Key)";
+        cout << endl;
+    }
+    cout << "-----------------------------" << endl << endl;
 
     // Write CSV header row
     outputFile << "RecordLength,ZipCode,PlaceName,State,County,Latitude,Longitude\n";
 
     // Read all records according to header record count
-    for (uint32_t i = 0; i < header.getRecordCount(); ++i) {
+    for (uint32_t i = 0; i < header.recordCount; ++i) {
         uint32_t recordLength;
         if (!inputFile.read(reinterpret_cast<char*>(&recordLength), sizeof(recordLength))) {
             cerr << "Error reading record length!" << endl;
@@ -62,18 +71,15 @@ void readBinaryFile(const string& inputFileName, const string& outputFileName) {
                 << buffer.getCounty() << ","
                 << buffer.getLatitude() << ","
                 << buffer.getLongitude() << "\n";
-        }
-        else {
+        } else {
             std::string head = record;
             if (head.size() > 200) head.resize(200);
-            if (head.find("ZipCode") != std::string::npos && head.find("PlaceName") != std::string::npos)
-             {
-        // header row - skip
-        continue;
+            if (head.find("ZipCode") != std::string::npos && head.find("PlaceName") != std::string::npos) {
+                // header row - skip
+                continue;
             }   
             std::cerr << "Error parsing record " << i << "! Raw record: '" << head << "'\n";
-            // optionally continue so you attempt to parse remaining records:
-             continue;
+            continue;
          }
     }
 

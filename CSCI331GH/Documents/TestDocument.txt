@@ -1,0 +1,159 @@
+CSCI 331 
+Zip Code Project 2 Testing Document
+Team 5
+
+
+Goals of this project;
+
+ 1. Builds and reads binary ZIP data file
+ 2. Creates and reads the ZIP offset index
+ 3. Searches correctly for valid and invalid
+    zip codes using the command line flag
+
+Testing Setup:
+ OS: Windows 10/11 and Fedora 
+ Compiler: g++ (MinGW-w64), C++ 17
+ 
+Test 1 - Index Creation
+Purpose:
+ Confirmation of CSV conversion to binary file.
+ Confirmation that the index file was created and loaded.
+ Correct display of “state extremes” (e.g., min/max ZIPs per state).
+
+Steps Performed:
+ 1.  Ran the program without ZIP lookup flags to trigger the
+     CSV-to-binary conversion and index generation process.
+ 2. Checked the output directory for the resulting files.
+
+Output:
+ converted_postal_codes.csv – cleaned and reformatted CSV data.
+ newBinaryPCCodes.dat – binary ZIP record file.
+ zip.idx – binary primary key index file mapping ZIP codes to file offsets.
+
+State   Easternmost    Westernmost    Northernmost   Southernmost   
+--------------------------------------------------------------------
+AA      34034          34034          34034          34034          
+AK      99923          99546          99723          99546          
+AL      36856          36584          35739          36547          
+AP      96507          96373          96507          96373          
+AR      72310          72747          72733          71749          
+AZ      86508          85349          86021          85620          
+CA      92267          95536          95567          92173          
+CO      81047          81411          81653          81138          
+CT      6243           6831           6079           6836           
+DC      20019          20016          20012          20375          
+DE      19944          19716          19810          19975          
+FL      33480          32568          32452          33040          
+FM      96941          96941          96941          96941          
+GA      31328          30752          30751          31562          
+HI      96898          96769          96722          96772          
+IA      52734          51001          52160          52632          
+ID      83238          83844          83826          83237          
+IL      60438          62379          60075          62914          
+IN      47003          47631          46530          47635          
+KS      66118          67836          66955          66778          
+KY      41568          42050          41074          42049          
+LA      70081          71007          71075          70081          
+MA      2643           1258           1913           2564           
+MD      21842          21531          21088          21866          
+ME      4631           4261           4741           3904           
+MH      96960          96970          96970          96960          
+MI      48061          49938          49918          49232          
+MN      55605          56740          56711          55931          
+MO      63881          64496          63535          63829          
+MP      96950          96951          96951          96952          
+MS      38847          39121          38671          39558          
+MT      59319          59844          59484          59739          
+NC      27982          28903          28631          28468          
+ND      58074          58621          58255          58043          
+NE      68431          69352          69365          68325          
+NH      3854           3466           3592           3062           
+NJ      7620           8070           7827           8212           
+NM      88135          88056          87418          88063          
+NV      89034          89402          89404          89029          
+NY      11954          14736          12979          10307          
+OH      44438          45003          44030          45680          
+OK      74901          73946          74072          74747          
+OR      97842          97465          97121          97635          
+PA      18336          16155          16428          19351          
+PW      96940          96940          96940          96940          
+RI      2837           2891           2824           2807           
+SC      29566          29658          29356          29915          
+SD      57068          57724          57645          57049          
+TN      37680          38109          37119          37396          
+TX      75932          79821          79051          78522          
+UT      84534          84083          84331          84784          
+VA      23336          24248          22625          24580          
+VT      5902           5734           5902           5352           
+WA      99402          98350          98231          98671          
+WI      54246          54082          54850          53102          
+WV      25425          25555          26050          24884          
+WY      82082          83120          82423          82321          
+Loaded index with 40877 entries.
+
+All three files were generated as expected.
+
+Test 2 - Valid Zip Lookup
+Purpose: 
+ Confirmation that the program can successfully find a valid zipcode.
+
+Steps Performed:
+ 1. Run program with a valid zipcode flag.
+
+Output:
+
+ --- ZIP Code Search Results ---
+---------------------------------------------
+ZIP Code: 1
+Place Name: Saint Cloud
+State: MN
+County: Stearns
+Latitude: 45.541
+Longitude: -94.1819
+
+This confirms the zipcode flag works for valid zipcodes.
+
+Test 3 - Invalid Zip Lookup
+Purpose: 
+ Confirmation that the program can detect a non-valid zipcode.
+
+Steps Performed: 
+ 1. Run the program with a fake zipcode.
+
+Output:
+ 
+--- ZIP Code Search Results ---
+ZIP code 99999 not found.
+
+This confirms that non-valid zipcodes will not be processed.
+
+Test 4 - Search with Multiple Zip (valid and non-valid)
+
+Purpose:
+ Confirmation that the program can process a multiple zipcode search.
+ Confirmation that the program will not process a non-valid zipcode.
+
+Output:
+ 
+--- ZIP Code Search Results ---
+ZIP code 99999 not found.
+---------------------------------------------
+ZIP Code: 1
+Place Name: Saint Cloud
+State: MN
+County: Stearns
+Latitude: 45.541
+Longitude: -94.1819
+---------------------------------------------
+ZIP Code: 6
+Place Name: Champlin
+State: MN
+County: Hennepin
+Latitude: 45.17
+Longitude: -93.3819
+
+
+All functional tests were successful. The program meets the
+specification for Project 2 by correctly building a primary
+key index, reading it back, and retrieving ZIP code records 
+from a binary data file.
